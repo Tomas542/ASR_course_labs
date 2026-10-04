@@ -1,0 +1,20 @@
+[project]
+name = "asr-course-labs"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Tomas245", email = "tomas.yudin@gmail.com" }
+]
+requires-python = ">=3.12, <3.13"
+dependencies = [
+    "jupyter>=1.0",
+    "librosa>=0.10",
+    "matplotlib>=3.7",
+    "nbformat>=5.9",
+    "numpy>=1.24",
+    "pandas>=3.0.6",
+    "pytest>=8.0",
+    "scipy>=1.10",
+    "soundfile>=0.12",
+]
