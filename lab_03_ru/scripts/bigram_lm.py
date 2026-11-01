@@ -4,7 +4,7 @@ import math
 import re
 from collections import Counter
 from dataclasses import dataclass
-from typing import Iterable
+from collections.abc import Iterable
 
 BOS = "<s>"
 EOS = "</s>"
@@ -25,12 +25,14 @@ class BigramLM:
     context_counts: Counter[str]
 
     @classmethod
-    def train(cls, sentences: Iterable[str], *, k: float = 0.5) -> "BigramLM":
+    def train(cls, sentences: Iterable[str], *, k: float = 0.5) -> BigramLM:
         if k <= 0:
             raise ValueError("для сглаживания add-k требуется k > 0")
         tokenized = [tokenize(sentence) for sentence in sentences]
         if not tokenized:
-            raise ValueError("обучающий корпус должен содержать хотя бы одно предложение")
+            raise ValueError(
+                "обучающий корпус должен содержать хотя бы одно предложение"
+            )
         lexical_vocabulary = {word for sentence in tokenized for word in sentence}
         vocabulary = lexical_vocabulary | {UNK, EOS}
         bigram_counts: Counter[tuple[str, str]] = Counter()
@@ -58,9 +60,15 @@ class BigramLM:
     def bigram_probability(self, previous: str, word: str) -> float:
         previous = self._context(previous)
         word = self._target(word)
-        vocab_size = len(self.vocabulary)  # предсказываются слова, <unk> и </s>, но не <s>
-        numerator = # напишите ваш код здесь
-        denominator = # напишите ваш код здесь
+        vocab_size = len(
+            self.vocabulary
+        )  # предсказываются слова, <unk> и </s>, но не <s>
+        numerator = (
+            self.bigram_counts[(previous, word)] + self.k
+        )  # напишите ваш код здесь
+        denominator = (
+            self.context_counts[previous] + self.k * vocab_size
+        )  # напишите ваш код здесь
         return numerator / denominator
 
     def sentence_logprob(self, sentence: str) -> float:

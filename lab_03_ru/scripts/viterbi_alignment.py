@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Sequence
+from collections.abc import Sequence
 
 
 def viterbi_align(
@@ -16,7 +16,9 @@ def viterbi_align(
     На первом кадре достижимо только start_state, на последнем нужен final_state.
     """
     if not costs or not costs[0]:
-        raise ValueError("матрица стоимостей должна содержать хотя бы один кадр и состояние")
+        raise ValueError(
+            "матрица стоимостей должна содержать хотя бы один кадр и состояние"
+        )
     state_count = len(costs[0])
     if any(len(row) != state_count for row in costs):
         raise ValueError("матрица стоимостей должна быть прямоугольной")
@@ -25,7 +27,9 @@ def viterbi_align(
     if final_state is None:
         final_state = state_count - 1
     if not (0 <= start_state < state_count and 0 <= final_state < state_count):
-        raise ValueError("start_state и final_state должны быть допустимыми индексами состояний")
+        raise ValueError(
+            "start_state и final_state должны быть допустимыми индексами состояний"
+        )
     if final_state < start_state:
         raise ValueError("final_state не должно предшествовать start_state")
     if len(costs) < final_state - start_state + 1:
@@ -39,11 +43,18 @@ def viterbi_align(
     for t in range(1, frame_count):
         for state in range(start_state, final_state + 1):
             # При равенстве min() выбирает первый вариант: остаться в состоянии.
-            choices = # напишите ваш код здесь
-            previous_state, previous_cost = # напишите ваш код здесь
+            choices = [(state, dp[t - 1][state])]  # напишите ваш код здесь
+            if state > start_state:
+                choices.append((state - 1, dp[t - 1][state - 1]))
+
+            previous_state, previous_cost = min(
+                choices, key=lambda x: x[1]
+            )  # напишите ваш код здесь
             if math.isfinite(previous_cost):
-                dp[t][state] = # напишите ваш код здесь
-                back[t][state] = # напишите ваш код здесь
+                dp[t][state] = previous_cost + float(
+                    costs[t][state]
+                )  # напишите ваш код здесь
+                back[t][state] = previous_state  # напишите ваш код здесь
 
     total_cost = dp[-1][final_state]
     if not math.isfinite(total_cost):
